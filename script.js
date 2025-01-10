@@ -9,6 +9,12 @@ function Gameboard() {
             board[i][j] = "";
         }
     }
+
+    function placeMarker(cell, activePlayer) {
+        board[cell.row][cell.column] = activePlayer.marker;
+    }
+
+    return {placeMarker};
 }
 
 function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") {
@@ -18,6 +24,22 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
     ]
 
     const board = Gameboard();
+
+    let activePlayer = players[0];
+
+    function getPlayerInput() {
+        return {
+            row: prompt("Select row:"), 
+            column: prompt("Select column:")
+        };
+    }
+    
+    function playRound() {
+        const cell = getPlayerInput();
+        board.placeMarker(cell, activePlayer);
+    }
+
+    playRound();
 }
 
 const game = GameController("Hannes", "Darlyne");

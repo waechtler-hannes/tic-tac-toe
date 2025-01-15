@@ -2,33 +2,32 @@ function Gameboard() {
     const rows = 3;
     const columns = 3;
     const board = [];
-
     const boardUi = document.querySelector(".board");
 
-    for (let i = 0; i < rows; i++) {
-        board[i] = [];
-        for (let j = 0; j < columns; j++) {
-            board[i][j] = "";
-            addCells(i, j);
+    (function createBoard() {
+        for (let i = 0; i < rows; i++) {
+            board[i] = [];
+            for (let j = 0; j < columns; j++) {
+                board[i][j] = "";
+                const cell = document.createElement("div");
+                cell.setAttribute("data-index-numbers", `${i}-${j}`)
+                boardUi.appendChild(cell);
+            }
         }
-    }
+    })();
 
-    function addCells(row, column) {
-        const cell = document.createElement("div");
-        cell.setAttribute("data-index-numbers", `${row}-${column}`)
-        boardUi.appendChild(cell);
-    }
+    function render() {
+        board.flat().map((element, index) => {
+            boardUi.children[index].textContent = element;
+        });
+    };
 
     function getBoard() {
         return board;
     }
 
-    function placeMarker(cell, activePlayer) {
-        board[cell.row][cell.column] = activePlayer.marker;
-    }
-
-    function getCellValue(cell) {
-        return board[cell.row][cell.column];
+    function getBoardUi() {
+        return boardUi;
     }
 
     function getWinPatterns() {
@@ -42,7 +41,11 @@ function Gameboard() {
                 [board[0][2], board[1][1], board[2][0]]];
     }
 
-    return {getBoard, placeMarker, getCellValue, getWinPatterns};
+    function placeMarker(cell, activePlayer) {
+        board[cell.row][cell.column] = activePlayer.marker;
+    }
+
+    return {getBoard, getBoardUi, getWinPatterns, placeMarker, render};
 }
 
 function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") {
@@ -50,45 +53,40 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
         {name: playerOneName, marker: "X"},
         {name: playerTwoName, marker: "O"}
     ]
-
-    const board = Gameboard();
-
+    const gameBoard = Gameboard();
     let activePlayer = players[0];
+
+    gameBoard.getBoardUi().addEventListener("click", (e) => {
+        const cell = {
+            row: e.target.getAttribute("data-index-numbers").at(0),
+            column: e.target.getAttribute("data-index-numbers").at(-1)
+        }
+        playRound(cell);
+    })
 
     function switchActivePlayer() {
         activePlayer = (activePlayer === players[0]) ? players[1] : players[0];
     }
 
-    function getPlayerInput() {
-        return {
-            row: prompt("Select row:"), 
-            column: prompt("Select column:")
-        };
-    }
-
     function checkWin(activePlayer) {
-        for(let i = 0; board.getWinPatterns().length > i; i++) {
-            if (board.getWinPatterns()[i].every((cell) => cell === activePlayer.marker)) {
+        for(let i = 0; gameBoard.getWinPatterns().length > i; i++) {
+            if (gameBoard.getWinPatterns()[i].every((cell) => cell === activePlayer.marker)) {
                 console.log(`${activePlayer.name} wins.`)
-            }
+            } 
         }
-        if (board.getBoard().flat().every((cell) => cell)) {
+        if (gameBoard.getBoard().flat().every((cell) => cell)) {
             console.log("Tie");
         }
     }
     
-    function playRound() {
-        // const cell = getPlayerInput();
-        if (board.getCellValue(cell) === "") {
-            board.placeMarker(cell, activePlayer);
+    function playRound(cell) {
+        if (gameBoard.getBoard()[cell.row][cell.column] === "") {
+            gameBoard.placeMarker(cell, activePlayer);
             checkWin(activePlayer);
             switchActivePlayer();
+            gameBoard.render();
         }
-        console.log(board.getBoard());
-        playRound();
+        console.log(gameBoard.getBoard());
     }
-
-    playRound();
 }
-
 const game = GameController("Hannes", "Darlyne");

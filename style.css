@@ -7,7 +7,6 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -20,9 +19,23 @@ input, button, textarea, select {
 
 /**********/
 
+@font-face {
+    font-family: "Pacifico";
+    src: url("./fonts/Pacifico-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url("./fonts/Roboto-VariableFont_wdth\,wght.ttf") format("truetype");
+}
+
 :root {
     --main-bg-color: rgb(221, 228, 236);
     --header-bg-color: rgb(78, 152, 201);
+}
+
+html {
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -33,14 +46,16 @@ body {
     background-color: var(--header-bg-color);
     color: white;
     text-align: center;
-    font-size: 3rem;
-    padding: 20px;
+    font-size: 4rem;
+    padding: 10px;
+    font-family: Pacifico;
 }
 
 .main-content {
     display: grid;
     justify-items: center;
     font-size: 1.8rem;
+    font-family: Roboto;
 }
 
 .main-content p {

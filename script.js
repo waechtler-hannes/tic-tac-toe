@@ -3,11 +3,20 @@ function Gameboard() {
     const columns = 3;
     const board = [];
 
+    const boardUi = document.querySelector(".board");
+
     for (let i = 0; i < rows; i++) {
         board[i] = [];
         for (let j = 0; j < columns; j++) {
             board[i][j] = "";
+            addCells(i, j);
         }
+    }
+
+    function addCells(row, column) {
+        const cell = document.createElement("div");
+        cell.setAttribute("data-index-numbers", `${row}-${column}`)
+        boardUi.appendChild(cell);
     }
 
     function getBoard() {
@@ -69,7 +78,7 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
     }
     
     function playRound() {
-        const cell = getPlayerInput();
+        // const cell = getPlayerInput();
         if (board.getCellValue(cell) === "") {
             board.placeMarker(cell, activePlayer);
             checkWin(activePlayer);

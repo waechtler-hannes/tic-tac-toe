@@ -57,36 +57,45 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
     let activePlayer = players[0];
 
     gameBoard.getBoardUi().addEventListener("click", (e) => {
-        const cell = {
+        playRound({
             row: e.target.getAttribute("data-index-numbers").at(0),
             column: e.target.getAttribute("data-index-numbers").at(-1)
-        }
-        playRound(cell);
+            }
+        );
     })
 
     function switchActivePlayer() {
         activePlayer = (activePlayer === players[0]) ? players[1] : players[0];
     }
 
-    function checkWin(activePlayer) {
-        for(let i = 0; gameBoard.getWinPatterns().length > i; i++) {
-            if (gameBoard.getWinPatterns()[i].every((cell) => cell === activePlayer.marker)) {
-                console.log(`${activePlayer.name} wins.`)
-            } 
-        }
+    function checkWin() {
+        let result = false;
+        gameBoard.getWinPatterns().map((singlePattern) => {
+            if (singlePattern.every((cell) => cell === activePlayer.marker)) {
+                result = true;
+            }
+        })
+        return result;
+    }
+
+    function checkTie() {
         if (gameBoard.getBoard().flat().every((cell) => cell)) {
-            console.log("Tie");
+            return true;
         }
     }
     
     function playRound(cell) {
         if (gameBoard.getBoard()[cell.row][cell.column] === "") {
             gameBoard.placeMarker(cell, activePlayer);
-            checkWin(activePlayer);
-            switchActivePlayer();
             gameBoard.render();
+            if (checkWin()) {
+                console.log(`${activePlayer.name} wins!`);
+            } else if (checkTie()) {
+                console.log("Tie")
+            }
+            switchActivePlayer();
         }
-        console.log(gameBoard.getBoard());
+        // console.log(gameBoard.getBoard());
     }
 }
 const game = GameController("Hannes", "Darlyne");

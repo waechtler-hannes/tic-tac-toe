@@ -12,8 +12,27 @@
         <h1>Tic Tac Toe</h1>
     </div>
     <div class="main-content">
-        <p>Players Turn</p>
-        <div class="board"></div>
+        <div class="game-interface">
+            <form class="form-ui">
+                <input class="name-input" type="text" id="player-one-name" aria-label="Enter name of player one" placeholder="Player 1">
+                <input class="name-input" type="text" id="player-two-name" aria-label="Enter name of player two" placeholder="Player 2">
+                <button class="start-game" type="submit">Start Game</button>
+            </form>
+            <div class="board-ui">
+                <p class="players-turn">Players Turn</p>
+                <div class="board">
+                    <div data-index-numbers="0-0"></div>
+                    <div data-index-numbers="0-1"></div>
+                    <div data-index-numbers="0-2"></div>
+                    <div data-index-numbers="1-0"></div>
+                    <div data-index-numbers="1-1"></div>
+                    <div data-index-numbers="1-2"></div>
+                    <div data-index-numbers="2-0"></div>
+                    <div data-index-numbers="2-1"></div>
+                    <div data-index-numbers="2-2"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

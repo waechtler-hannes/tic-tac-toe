@@ -14,7 +14,6 @@ function Gameboard() {
 
     function getBoard() {
         return board;
-        
     }
 
     function getWinPatterns() {
@@ -36,30 +35,39 @@ function Gameboard() {
 }
 
 function gameUserInterface(gameBoard) {
-    const boardUi = document.querySelector(".board");
+    const gameUi = document.querySelector(".game-interface");
+    const boardUi = document.querySelector(".board-ui");
+    const formUi = document.querySelector(".form-ui");
 
     function getBoardUi() {
         return boardUi;
     }
 
-    (function createCells() {
-        gameBoard.getBoard().map((row, index) => {
-            row.map((element, index2) => {
-                const cell = document.createElement("div");
-                cell.setAttribute("data-index-numbers", `${index}-${index2}`);
-                cell.textContent = element;
-                boardUi.appendChild(cell);
-            })
-        })
-    })();
+    function getFormUi() {
+        return formUi;
+    }
 
-    function render() {
+    function renderBoardUi() {
+        if (gameUi.contains(boardUi)) {
+            updateCells();
+        } else {
+            gameUi.removeChild(formUi);
+            gameUi.appendChild(boardUi);
+        }
+    }
+
+    function renderFormUi() {
+        gameUi.removeChild(boardUi);
+        gameUi.appendChild(formUi);
+    }
+
+    function updateCells() {
         gameBoard.getBoard().flat().map((element, index) => {
-            boardUi.children[index].textContent = element;
+            boardUi.children[1].children[index].textContent = element;
         });
-    };
+    }
 
-    return {getBoardUi, render};
+    return {getBoardUi, getFormUi, renderBoardUi, renderFormUi};
 }
 
 function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") {
@@ -69,7 +77,7 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
     ]
     const gameBoard = Gameboard();
     const gameUi = gameUserInterface(gameBoard);
-    let activePlayer = players[Math.random().toFixed()];
+    let activePlayer = players[0];
 
     gameUi.getBoardUi().addEventListener("click", (e) => {
         playRound({
@@ -78,6 +86,20 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
             }
         );
     })
+
+    gameUi.getFormUi().addEventListener("submit", (e) => {
+        e.preventDefault();
+        setPlayerNames(
+            gameUi.getFormUi().querySelector("#player-one-name").value, 
+            gameUi.getFormUi().querySelector("#player-two-name").value
+        )
+        gameUi.renderBoardUi();
+    })
+
+    function setPlayerNames(nameOne, nameTwo) {
+        if(nameOne != "") players[0].name = nameOne;
+        if(nameTwo != "") players[1].name = nameTwo;
+    }
 
     function switchActivePlayer() {
         activePlayer = (activePlayer === players[0]) ? players[1] : players[0];
@@ -102,7 +124,7 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
     function playRound(cell) {
         if (gameBoard.getBoard()[cell.row][cell.column] === "") {
             gameBoard.placeMarker(cell, activePlayer);
-            gameUi.render();
+            gameUi.renderBoardUi();
             if (checkWin()) {
                 console.log(`${activePlayer.name} wins!`);
             } else if (checkTie()) {
@@ -112,5 +134,8 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
         }
         console.log(gameBoard.getBoard());
     }
+
+    gameUi.renderFormUi();
+
 }
-const game = GameController("Hannes", "Darlyne");
+const game = GameController();

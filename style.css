@@ -42,6 +42,8 @@ body {
     background-color: var(--main-bg-color);
 }
 
+/* header */
+
 .header {
     background-color: var(--header-bg-color);
     color: white;
@@ -51,14 +53,47 @@ body {
     font-family: Pacifico;
 }
 
-.main-content {
-    display: grid;
-    justify-items: center;
+/* game-interface */
+
+.game-interface {
     font-size: 1.8rem;
     font-family: Roboto;
 }
 
-.main-content p {
+/* form-ui */
+
+.form-ui {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 250px;
+    border-radius: 5px;
+}
+
+.name-input {
+    width: 15rem;
+    font-size: 1.6rem;
+    border-radius: 6px;
+    padding: 0rem 0.5rem;
+    border: 1px solid black;
+}
+
+.start-game {
+    margin-top: 50px;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 0rem 2rem;
+    font-size: 1.3rem;
+}
+
+/* board-ui */
+
+.board-ui {
+    justify-items: center;
+}
+
+.players-turn {
     padding: 30px;
 }
 

@@ -93,8 +93,8 @@ body {
     justify-items: center;
 }
 
-.players-turn {
-    padding: 30px;
+.message-panel {
+    padding: 50px;
 }
 
 .board {
@@ -107,4 +107,20 @@ body {
 
 .board div {
     background-color: white;
+}
+
+.reset {
+    margin-top: 50px;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 0rem 2rem;
+    font-size: 1.3rem;
+}
+
+.new-game {
+    margin-top: 50px;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 0rem 2rem;
+    font-size: 1.3rem;
 }

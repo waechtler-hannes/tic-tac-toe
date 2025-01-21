@@ -76,12 +76,16 @@ function gameUserInterface(gameBoard) {
     function updateMessagePanel(activePlayer, message) {
         switch (message) {
             case "playerTurn":
+                messagePanel.classList.remove("win");
+                messagePanel.classList.remove("tie");
                 messagePanel.textContent = `${activePlayer.name}'s Turn. (${activePlayer.marker})`;
                 break;
             case "win":
+                messagePanel.classList.add("win");
                 messagePanel.textContent = `Congratulations! ${activePlayer.name} wins!`;
                 break;
             case "tie":
+                messagePanel.classList.add("tie");
                 messagePanel.textContent = "The game is over! It's a tie!"
                 break;
         }

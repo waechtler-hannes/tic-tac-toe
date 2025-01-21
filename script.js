@@ -11,11 +11,19 @@ function Gameboard() {
             }
         }
     })();
-
+    
     function getBoard() {
         return board;
     }
-
+    
+    function resetBoard() {
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board.length; j++) {
+                board[i][j] = "";
+            }
+        }
+    }
+    
     function getWinPatterns() {
         return [[board[0][0], board[0][1], board[0][2]], 
                 [board[1][0], board[1][1], board[1][2]],
@@ -31,7 +39,7 @@ function Gameboard() {
         board[cell.row][cell.column] = activePlayer.marker;
     }
 
-    return {getBoard, getWinPatterns, placeMarker};
+    return {getBoard, resetBoard, getWinPatterns, placeMarker};
 }
 
 function gameUserInterface(gameBoard) {
@@ -52,11 +60,14 @@ function gameUserInterface(gameBoard) {
                 gameUi.appendChild(formUi);
                 break;
             case "board":
-                gameUi.removeChild(formUi);
-                gameUi.appendChild(boardUi);
+                if (gameUi.querySelector(".board-ui")) {
+                    updateBoard();
+                } else {
+                    gameUi.removeChild(formUi);
+                    gameUi.appendChild(boardUi);
+                }
                 break;
             case "messagePanel":
-                updateBoard();
                 updateMessagePanel(object.activePlayer, object.message);
                 break;
         }
@@ -94,10 +105,14 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
     ]
 
     let activePlayer = players[0];
+    
+    gameUi.getGameUi().querySelector(".form-ui").addEventListener("submit", (e) => submitForm(e));
 
     gameUi.getGameUi().querySelector(".board").addEventListener("click", (e) => startGameCycle(e));
 
-    gameUi.getGameUi().querySelector(".form-ui").addEventListener("submit", (e) => submitForm(e));
+    gameUi.getGameUi().querySelector(".restart-game").addEventListener("click", () => restartGame());
+
+    gameUi.getGameUi().querySelector(".new-game").addEventListener("click", () => startNewGame());
 
     function submitForm(e) {
         e.preventDefault();
@@ -105,8 +120,8 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
             gameUi.getGameUi().querySelector("#player-one-name").value, 
             gameUi.getGameUi().querySelector("#player-two-name").value
         )
-        gameUi.render({target: "messagePanel",activePlayer: activePlayer, message: "playerTurn"});
         gameUi.render({target: "board"});
+        gameUi.render({target: "messagePanel", activePlayer: activePlayer, message: "playerTurn"});
     }
 
     function setPlayerNames(nameOne, nameTwo) {
@@ -150,6 +165,7 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
                 switchActivePlayer();
                 message = "playerTurn";
             }
+            gameUi.render({target: "board"})
             gameUi.render({
                 target: "messagePanel", 
                 activePlayer: activePlayer, 
@@ -157,6 +173,22 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
         }
     }
 
+    function restartGame() {
+        gameBoard.resetBoard();
+        activePlayer = players[0];
+        gameUi.render({target: "board"});
+        gameUi.render({
+            target: "messagePanel", 
+            activePlayer: activePlayer, 
+            message: "playerTurn"})
+    }
+
+    function startNewGame() {
+        restartGame();
+        gameUi.render({target: "form"});
+    }
+
     gameUi.render({target: "form"});
 }
+
 const game = GameController();

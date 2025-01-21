@@ -95,15 +95,11 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
 
     let activePlayer = players[0];
 
-    gameUi.getGameUi().querySelector(".board").addEventListener("click", (e) => {
-        playRound({
-            row: e.target.getAttribute("data-index-numbers").at(0),
-            column: e.target.getAttribute("data-index-numbers").at(-1)
-            }
-        );
-    })
+    gameUi.getGameUi().querySelector(".board").addEventListener("click", (e) => startGameCycle(e));
 
-    gameUi.getGameUi().querySelector(".form-ui").addEventListener("submit", (e) => {
+    gameUi.getGameUi().querySelector(".form-ui").addEventListener("submit", (e) => submitForm(e));
+
+    function submitForm(e) {
         e.preventDefault();
         setPlayerNames(
             gameUi.getGameUi().querySelector("#player-one-name").value, 
@@ -111,7 +107,7 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
         )
         gameUi.render({target: "messagePanel",activePlayer: activePlayer, message: "playerTurn"});
         gameUi.render({target: "board"});
-    })
+    }
 
     function setPlayerNames(nameOne, nameTwo) {
         if(nameOne != "") players[0].name = nameOne;
@@ -122,7 +118,7 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
         activePlayer = (activePlayer === players[0]) ? players[1] : players[0];
     }
 
-    function checkWin() {
+    function isWin() {
         let result = false;
         gameBoard.getWinPatterns().map((singlePattern) => {
             if (singlePattern.every((cell) => cell === activePlayer.marker)) {
@@ -132,32 +128,32 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
         return result;
     }
 
-    function checkTie() {
+    function isTie() {
         if (gameBoard.getBoard().flat().every((cell) => cell)) {
             return true;
         }
     }
     
-    function playRound(cell) {
-        if (gameBoard.getBoard()[cell.row][cell.column] === "") {
+    function startGameCycle(e) {
+        const cell = {
+            row: e.target.getAttribute("data-index-numbers").at(0),
+            column: e.target.getAttribute("data-index-numbers").at(-1)
+            };
+        if (gameBoard.getBoard()[cell.row][cell.column] === "" && !isWin()) {
             gameBoard.placeMarker(cell, activePlayer);
-            if (checkWin()) {
-                gameUi.render({
-                    target: "messagePanel", 
-                    activePlayer: activePlayer, 
-                    message: "win"});
-            } else if (checkTie()) {
-                gameUi.render({
-                    target: "messagePanel", 
-                    activePlayer: activePlayer, 
-                    message: "tie"});
+            let message;
+            if (isWin()) {
+                message = "win";
+            } else if (isTie()) {
+                message = "tie";
             } else {
                 switchActivePlayer();
-                gameUi.render({
-                    target: "messagePanel", 
-                    activePlayer: activePlayer, 
-                    message: "playerTurn"});
+                message = "playerTurn";
             }
+            gameUi.render({
+                target: "messagePanel", 
+                activePlayer: activePlayer, 
+                message: message});
         }
     }
 

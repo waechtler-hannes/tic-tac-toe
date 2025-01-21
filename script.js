@@ -45,8 +45,8 @@ function gameUserInterface(gameBoard) {
         return gameUi;
     }
 
-    function render(target, activePlayer) {
-        switch (target) {
+    function render(object) {
+        switch (object.target) {
             case "form":
                 gameUi.removeChild(boardUi);
                 gameUi.appendChild(formUi);
@@ -55,31 +55,25 @@ function gameUserInterface(gameBoard) {
                 gameUi.removeChild(formUi);
                 gameUi.appendChild(boardUi);
                 break;
-            case "player":
+            case "messagePanel":
                 updateBoard();
-                updateMessagePanel(activePlayer)
-                break;
-            case "win":
-                updateBoard();
-                showWinMessage(activePlayer);
-                break;
-            case "tie":
-                updateBoard();
-                showTieMessage();
+                updateMessagePanel(object.activePlayer, object.message);
                 break;
         }
     }
 
-    function updateMessagePanel(activePlayer) {
-        messagePanel.textContent = `${activePlayer.name}'s Turn. (${activePlayer.marker})`;
-    }
-
-    function showWinMessage(activePlayer) {
-        messagePanel.textContent = `Congratulations! ${activePlayer.name} wins!`;
-    }
-
-    function showTieMessage() {
-        messagePanel.textContent = "The game is over! It's a tie!"
+    function updateMessagePanel(activePlayer, message) {
+        switch (message) {
+            case "playerTurn":
+                messagePanel.textContent = `${activePlayer.name}'s Turn. (${activePlayer.marker})`;
+                break;
+            case "win":
+                messagePanel.textContent = `Congratulations! ${activePlayer.name} wins!`;
+                break;
+            case "tie":
+                messagePanel.textContent = "The game is over! It's a tie!"
+                break;
+        }
     }
 
     function updateBoard() {
@@ -92,12 +86,13 @@ function gameUserInterface(gameBoard) {
 }
 
 function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") {
+    const gameBoard = Gameboard();
+    const gameUi = gameUserInterface(gameBoard);
     const players = [
         {name: playerOneName, marker: "X"},
         {name: playerTwoName, marker: "O"}
     ]
-    const gameBoard = Gameboard();
-    const gameUi = gameUserInterface(gameBoard);
+
     let activePlayer = players[0];
 
     gameUi.getGameUi().querySelector(".board").addEventListener("click", (e) => {
@@ -114,8 +109,8 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
             gameUi.getGameUi().querySelector("#player-one-name").value, 
             gameUi.getGameUi().querySelector("#player-two-name").value
         )
-        gameUi.render("player", activePlayer);
-        gameUi.render("board");
+        gameUi.render({target: "messagePanel",activePlayer: activePlayer, message: "playerTurn"});
+        gameUi.render({target: "board"});
     })
 
     function setPlayerNames(nameOne, nameTwo) {
@@ -147,17 +142,25 @@ function GameController(playerOneName = "Player 1", playerTwoName = "Player 2") 
         if (gameBoard.getBoard()[cell.row][cell.column] === "") {
             gameBoard.placeMarker(cell, activePlayer);
             if (checkWin()) {
-                gameUi.render("win", activePlayer);
+                gameUi.render({
+                    target: "messagePanel", 
+                    activePlayer: activePlayer, 
+                    message: "win"});
             } else if (checkTie()) {
-                gameUi.render("tie", activePlayer);
+                gameUi.render({
+                    target: "messagePanel", 
+                    activePlayer: activePlayer, 
+                    message: "tie"});
             } else {
                 switchActivePlayer();
-                gameUi.render("player", activePlayer);
+                gameUi.render({
+                    target: "messagePanel", 
+                    activePlayer: activePlayer, 
+                    message: "playerTurn"});
             }
         }
     }
 
-    gameUi.render("form");
-
+    gameUi.render({target: "form"});
 }
 const game = GameController();
